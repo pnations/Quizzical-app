@@ -1,80 +1,89 @@
-import React, { memo } from 'react';
-import AnswerButton from './AnswerButton';
-import ScoreDisplay from './ScoreDisplay';
+import React from 'react';
 
-const QuizScreen = memo(({
-  questions,
-  selectedAnswers,
-  setSelectedAnswers,
-  score,
-  answersChecked,
-  checkAnswers,
-  playAgain,
-  loading,
+const QuizScreen = ({
+    questions,
+    selectedAnswers,
+    answersChecked,
+    setSelectedAnswers,
+    checkAnswers,
+    playAgain,
+    score,
+    loading,
 }) => {
-  if (loading) return <p>Loading questions...</p>;
+    const handleAnswerClick = (questionIndex, answer) => {
+        if (!answersChecked) {
+            setSelectedAnswers({ [questionIndex]: answer });
+        }
+    };
 
-  // Check if all questions have been answered
-  const allQuestionsAnswered = questions.length > 0 && questions.length === Object.keys(selectedAnswers).length;
+    // Check if all questions have been answered
+    const allQuestionsAnswered =
+        Object.keys(selectedAnswers).length === questions.length;
 
-  return (
-    <div className="quiz-screen">
-      {questions.map((question, index) => (
-        <QuestionCard
-          key={index}
-          question={question}
-          selectedAnswer={selectedAnswers[index]}
-          onAnswerSelect={(answer) => setSelectedAnswers({ [index]: answer })}
-          answersChecked={answersChecked}
-        />
-      ))}
-      
-      {/* Hide Check Answers button after it is clicked */}
-      {!answersChecked && (
-        <button 
-          onClick={checkAnswers} 
-          className="button check-answers-btn" 
-          disabled={!allQuestionsAnswered} // Disable if not all questions are answered
-        >
-          Check Answers
-        </button>
-      )}
+    return (
+        <div className="quiz-screen">
+            {questions.map((question, questionIndex) => (
+                <div key={questionIndex} className="question">
+                    <h3 dangerouslySetInnerHTML={{ __html: question.question }}></h3>
+                    <div id="answer-container">
+                        {question.allAnswers.map((answer, answerIndex) => {
+                            const isSelected =
+                                selectedAnswers[questionIndex] === answer;
+                            const isCorrect =
+                                answer === question.correct_answer;
+                            const isChecked = answersChecked;
 
-      {/* Show ScoreDisplay which contains Play Again button only after answers are checked */}
-      {answersChecked && (
-        <ScoreDisplay score={score} totalQuestions={questions.length} onPlayAgain={playAgain} />
-      )}
-    </div>
-  );
-});
+                            // Determine button class
+                            let buttonClass = 'answer-button';
+                            if (isChecked) {
+                                if (isCorrect) {
+                                    buttonClass += ' correct';
+                                } else if (isSelected) {
+                                    buttonClass += ' incorrect';
+                                }
+                            } else if (isSelected) {
+                                buttonClass += ' selected';
+                            }
 
-const QuestionCard = memo(({ question, selectedAnswer, onAnswerSelect, answersChecked }) => {
-  const getButtonClass = (answer) => {
-    if (selectedAnswer === answer) return 'selected';
-    if (answersChecked) {
-      if (answer === question.correct_answer) return 'correct';
-      if (selectedAnswer === answer) return 'incorrect';
-    }
-    return '';
-  };
+                            return (
+                                <button
+                                    key={answerIndex}
+                                    className={buttonClass}
+                                    disabled={answersChecked}
+                                    onClick={() =>
+                                        handleAnswerClick(questionIndex, answer)
+                                    }
+                                    dangerouslySetInnerHTML={{ __html: answer }}
+                                ></button>
+                            );
+                        })}
+                    </div>
+                </div>
+            ))}
 
-  return (
-    <div className="question">
-      <h3 dangerouslySetInnerHTML={{ __html: question.question }}></h3>
-      <ul>
-        {question.allAnswers.map((answer) => (
-          <li key={answer}>
-            <AnswerButton
-              answer={answer}
-              className={getButtonClass(answer)}
-              onClick={() => onAnswerSelect(answer)}
-              disabled={answersChecked}
-            />
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-});
+            {answersChecked ? (
+                <div className="score-display">
+                    <h2>
+                        You scored {score}/{questions.length} correct answers!
+                    </h2>
+                    <button className="restart-btn" onClick={playAgain}>
+                        Play Again
+                    </button>
+                </div>
+            ) : (
+                // Hide the button when loading
+                !loading && (
+                    <button
+                        className="button"
+                        onClick={checkAnswers}
+                        disabled={!allQuestionsAnswered}
+                    >
+                        Check Answers
+                    </button>
+                )
+            )}
+        </div>
+    );
+};
 
 export default QuizScreen;

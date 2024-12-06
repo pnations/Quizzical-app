@@ -13,7 +13,7 @@ const QuizScreen = memo(({
   loading,
   error,
 }) => {
-  if (loading) return <p>Loading questions...</p>;
+
   if (error) return <ErrorDisplay error={error} onRetry={playAgain} />;
 
   return (
