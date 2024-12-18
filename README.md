@@ -29,7 +29,7 @@
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/pnations/quizzical-app
+   git clone https://github.com/YOUR_USERNAME/quizzical-app
    ```
 2. Navigate to the project directory:
    ```bash
