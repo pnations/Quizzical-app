@@ -5,6 +5,8 @@
 
 **Quizzical** is a trivia quiz application that tests your knowledge of **World Geography**. Built using **React**, this app offers a clean and responsive interface, interactive question answering, and instant feedback.
 
+<img width="1401" alt="Screenshot 2025-02-27 at 9 16 12 AM" src="https://github.com/user-attachments/assets/9ea93d42-b6ca-4863-a6c4-4abbcd915b07" />
+
 ---
 
 ## 🚀 Features
